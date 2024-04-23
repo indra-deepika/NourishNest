@@ -30,3 +30,8 @@ class OrderItemForm(FlaskForm):
 class ItemForm(FlaskForm):
     product_id = HiddenField(validators=[DataRequired()])
     quantity = HiddenField(validators=[DataRequired()], default=1)
+
+class ItemForm2(FlaskForm):
+    product_id = HiddenField(validators=[DataRequired()])
+    quantity = HiddenField(validators=[DataRequired()], default=1)
+    price = HiddenField(validators=[DataRequired()])

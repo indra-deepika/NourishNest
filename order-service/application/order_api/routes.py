@@ -4,6 +4,7 @@ from . import order_api_blueprint
 from .. import db
 from ..models import Order, OrderItem
 from .api.UserClient import UserClient
+import sys
 
 
 @order_api_blueprint.route('/api/orders', methods=['GET'])
@@ -54,6 +55,39 @@ def order_add_item():
     db.session.commit()
     response = jsonify({'result': known_order.to_json()})
     return response
+
+
+@order_api_blueprint.route('/api/order/remove-item', methods=['POST'])
+def order_remove_item():
+
+    print("Removing item" , file=sys.stderr)
+    api_key = request.headers.get('Authorization')
+    response = UserClient.get_user(api_key)
+
+    if not response:
+        return make_response(jsonify({'message': 'Not logged in'}), 401)
+
+    user = response['result']
+    p_id = int(request.form['product_id'])
+    qty = int(request.form['qty'])
+    u_id = int(user['id'])
+
+    known_order = Order.query.filter_by(user_id=u_id, is_open=1).first()
+
+    if known_order is None:
+        response = jsonify({'message': 'No order found'})
+    else:
+        for item in known_order.items:
+            if item.product_id == p_id:
+                item.quantity -= qty
+                if item.quantity <= 0:
+                    known_order.items.remove(item)
+
+        db.session.add(known_order)
+        db.session.commit()
+        response = jsonify({'result': known_order.to_json()})
+    return response
+
 
 
 @order_api_blueprint.route('/api/order', methods=['GET'])

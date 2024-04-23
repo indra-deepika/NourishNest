@@ -3,6 +3,7 @@ from . import product_api_blueprint
 from .. import db
 from ..models import Product
 from flask import jsonify, request
+import sys
 
 
 @product_api_blueprint.route('/api/products', methods=['GET'])
@@ -43,3 +44,17 @@ def product(slug):
     else:
         response = jsonify({'message': 'Cannot find product'}), 404
     return response
+
+
+@product_api_blueprint.route('/api/product/<product_id>', methods=['GET'])
+def get_product_by_id(product_id):
+    item = Product.query.filter_by(id=product_id).first()
+    if item is not None:
+        response = jsonify({'result': item.to_json()})
+    else:
+        response = jsonify({'message': 'Cannot find product'}), 404
+
+    print(response, file=sys.stderr)
+    return response
+
+

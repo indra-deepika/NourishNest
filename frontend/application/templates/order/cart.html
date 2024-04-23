@@ -1,0 +1,61 @@
+<!-- Create cart page for added items -->
+
+{% extends "base_col_1.html" %}
+{% from "macros/_macros_form.html" import render_field %}
+{% block title %}Checkout page{% endblock %}
+
+{% block pageContent %}
+
+    <h1>Cart</h1>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+                <!-- print item -->
+
+                <tr>
+                    <td>{{ item.product }}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{item.price}}</td>
+                    
+
+                    <!-- add and subtract quantity buttons -->
+                    <td>
+                        <form action="{{ url_for('frontend.cart') }}" method="post" style="display:inline;">
+                            <input type="hidden" name="product_id" value="{{ item.product }}">
+                            <input type="hidden" name="action" value="increase_quantity">
+                            <button type="submit" class="btn btn-success">+</button>
+                        </form>
+                        <form action="{{ url_for('frontend.cart') }}" method="post" style="display:inline;">
+                            <input type="hidden" name="product_id" value="{{ item.product}}">
+                            <input type="hidden" name="action" value="decrease_quantity">
+                            <button type="submit" class="btn btn-danger">-</button>
+                        </form>
+
+
+                    </td>
+                </tr>
+
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>Total Value: {{total_amount}}</h4>
+    <form action="{{ url_for('frontend.cart') }}" method="post" style="display:inline;">
+        <input type="hidden" name="action" value="confirm_order">
+        <button type="submit" class="btn btn-primary">Confirm Order</button>
+    </form>
+
+{% endblock %}

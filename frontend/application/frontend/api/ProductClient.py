@@ -15,3 +15,11 @@ class ProductClient:
         response = requests.request(method="GET", url='http://cproduct-service:5002/api/product/' + slug)
         product = response.json()
         return product
+    
+    @staticmethod
+    def get_product_by_id(product_id):
+        response = requests.request(method="GET", url='http://cproduct-service:5002/api/product/' + str(product_id))
+        product = response.json()
+        return product
+    
+    
